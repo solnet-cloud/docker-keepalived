@@ -36,7 +36,7 @@ ENV KA_PKG_VRS 1:1.2.7-1ubuntu1
 # Install any required packages
 RUN \
     apt-get update && \
-    apt-get install python python-jinja2 python-ipy python-netifaces keepalived=$KA_PKG_VRS -y && \
+    apt-get install python python-jinja2 python-ipy python-netifaces python-requests keepalived=$KA_PKG_VRS -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
