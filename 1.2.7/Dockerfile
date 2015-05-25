@@ -11,7 +11,7 @@ FROM ubuntu:14.04
 
 # Run Instructions:
 # When running use the following flags:
-#       --restart=on-failure --log-driver=syslog --net=host --privleged=true
+#       --restart=on-failure --log-driver=syslog --net=host --privileged=true
 # The following command line arguments are supported.
 # == Output of --help here ==
 

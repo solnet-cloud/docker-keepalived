@@ -45,11 +45,12 @@ def vip_check(vips,check_str,exclude):
         print "The argument %s provided does not have 3 '/' delimited arguments, terminating" % check_str
         sys.exit(0) # This should be a return 0 to prevent the container from restarting.
     try:
-        check_ip = IP(check[0] + '/' + check[1])
+        check_ip = IP(check[0])
     except ValueError as e:
-        print "The IP %s/%s does not appear to be a valid (returned %s), terminating..." % (check[0], check[1], e)
+        print "The IP %s does not appear to be a valid (returned %s), terminating..." % (check[0], e)
         sys.exit(0) # This should be a return 0 to prevent the container from restarting.
         
+    #TODO: Check subnet length    
     if check[2] not in netifaces.interfaces():
         print "The iface %s does not appear to be a valid interface on this host, terminating..." % check[2]
         sys.exit(0) # This should be a return 0 to prevent the container from restarting.
