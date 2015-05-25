@@ -360,6 +360,8 @@ sys.stdout.flush()
 #child_path = ["cat","/etc/keepalived/keepalived.conf"]
 child_path = ["/usr/sbin/keepalived","--dont-fork","--log-console"]
 child = Popen(child_path, stdout = PIPE, stderr = STDOUT, shell = False) 
+# TODO: Figure out why this is cleaning up properly and releasing the IP address
+
 
 # Reopen stdout as unbuffered. This will mean log messages will appear as soon as they become avaliable.
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
