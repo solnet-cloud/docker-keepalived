@@ -357,7 +357,8 @@ for template_item in template_list:
 sys.stdout.flush()
 
 # Spawn the child
-child_path = ["/usr/sbin/keepalived","--dont-fork","--log-console"]
+child_path = ["cat","/etc/keepalived/keepalived.conf"]
+#child_path = ["/usr/sbin/keepalived","--dont-fork","--log-console"]
 child = Popen(child_path, stdout = PIPE, stderr = STDOUT, shell = False) 
 
 # Reopen stdout as unbuffered. This will mean log messages will appear as soon as they become avaliable.
