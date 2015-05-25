@@ -51,7 +51,7 @@ RUN \
 ADD templates/keepalived.conf /ka-templates/keepalived.conf
 
 # Configuration Files
-ADD scripts/check_haproxy.sh /usr/local/bin/check_haproxy
+ADD scripts/check_haproxy.py /usr/local/bin/check_haproxy
 RUN chmod +x /usr/local/bin/check_haproxy
 
 # Entry Script
