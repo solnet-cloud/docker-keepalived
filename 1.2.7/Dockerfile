@@ -22,11 +22,13 @@ FROM ubuntu:14.04
 # Information
 MAINTAINER Taylor Bertie <taylor.bertie@solnet.co.nz>
 LABEL Description="This image is used to stand up a keepalived daemon that will keep a VIP active between multiple \
-nodes. This container must run in privleged mode with host networking in order to operate." Version="1.2.7"
+nodes. This container must run in privleged mode with host networking in order to operate. Provide VIPs via \
+'203.0.113.0/24/eth0'" Version="1.2.7"
 
 # Patch notes:
 # Version 1.2.7
 #       - First working version of keepalived
+#       - Current version does not handle routes
 
 # Set the keepalived version to be pinned
 ENV KA_PKG_VRS 1:1.2.7-1ubuntu1
@@ -34,13 +36,14 @@ ENV KA_PKG_VRS 1:1.2.7-1ubuntu1
 # Install any required packages
 RUN \
     apt-get update && \
-    apt-get install python python-jinja2 keepalived=$KA_PKG_VRS -y && \
+    apt-get install python python-jinja2 python-ipy python-netifaces keepalived=$KA_PKG_VRS -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Prepare various directories in /ka-data/
 RUN \
     mkdir -p /ka-data/ && \
+    mkdir -p /ka-data/scripts && \
     mkdir -p /ka-templates
     
 # Mount the configuration files, entry script and templates
@@ -48,7 +51,8 @@ RUN \
 ADD templates/keepalived.conf /ka-templates/keepalived.conf
 
 # Configuration Files
-# None
+ADD scripts/check_haproxy.sh /usr/local/bin/check_haproxy
+RUN chmod +x /usr/local/bin/check_haproxy
 
 # Entry Script
 ADD scripts/entry.py /usr/local/bin/entry
