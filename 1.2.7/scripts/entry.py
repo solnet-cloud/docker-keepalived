@@ -38,8 +38,11 @@ def cleanup(child):
     if child is not None: # Make sure the child actually exists
         print "Sending SIGTERM"
         child.terminate() # Terminate the child cleanly
-        for line in iter(child.stdout.readline, ''): # Clear the buffer of any lines remaining
-            sys.stdout.write(line)
+        try:
+            for line in iter(child.stdout.readline, ''): # Clear the buffer of any lines remaining
+                sys.stdout.write(line)
+        except IOError:
+            pass # No output found, resulted in IOError
 
 
 # User defined exception
