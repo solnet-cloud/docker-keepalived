@@ -35,6 +35,7 @@ scripts_path = '/ka-data/scripts/'
 def cleanup(child):
     # Warning: This function can be registered more than once, code defensively!
     if child is not None: # Make sure the child actually exists
+        print "Sending SIGTERM"
         child.terminate() # Terminate the child cleanly
         for line in iter(child.stdout.readline, ''): # Clear the buffer of any lines remaining
             sys.stdout.write(line)
