@@ -10,6 +10,7 @@ import sys,os,pwd,grp   # OS Libraries
 import argparse         # Parse Arguments
 from subprocess import Popen, PIPE, STDOUT
                         # Open up a process
+import atexit
 
 # Important required templating libarires
 from jinja2 import Environment as TemplateEnvironment, \
@@ -29,6 +30,14 @@ import requests         # Allows you to perform requests (like curl)
                         
 # Varaibles/Consts
 scripts_path = '/ka-data/scripts/'
+
+# Define the cleanup function
+def cleanup(child):
+    # Warning: This function can be registered more than once, code defensively!
+    if child is not None: # Make sure the child actually exists
+        child.terminate() # Terminate the child cleanly
+        for line in iter(child.stdout.readline, ''): # Clear the buffer of any lines remaining
+            sys.stdout.write(line)
 
 # User defined exception
 class SubprocessTimeoutError(Exception):
@@ -82,6 +91,9 @@ def run_command_with_timeout(cmd, timeout_sec):
         raise SubprocessTimeoutError('Process #%d killed after %f seconds' % (proc.pid, timeout_sec))
     # Process completed naturally - return exit code
     return proc.returncode
+
+# Register atexit
+atexit.register(cleanup,None)
     
 ########################################################################################################################
 # ARGUMENT PARSER                                                                                                      #
@@ -356,15 +368,18 @@ for template_item in template_list:
 # Flush anything on the buffer
 sys.stdout.flush()
 
+
 # Spawn the child
 #child_path = ["cat","/etc/keepalived/keepalived.conf"]
 child_path = ["/usr/sbin/keepalived","--dont-fork","--log-console"]
-child = Popen(child_path, stdout = PIPE, stderr = STDOUT, shell = False) 
-# TODO: Figure out why this is cleaning up properly and releasing the IP address
+child = Popen(child_path, stdout = PIPE, stderr = STDOUT, shell = False)
 
+# Register the atexit terminaton
+atexit.register(cleanup, child)
 
 # Reopen stdout as unbuffered. This will mean log messages will appear as soon as they become avaliable.
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+
 
 # Output any log items to Docker
 for line in iter(child.stdout.readline, ''):
