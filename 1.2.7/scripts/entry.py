@@ -96,7 +96,7 @@ def run_command_with_timeout(cmd, timeout_sec):
     return proc.returncode
 
 # Register atexit
-atexit.register(cleanup,None)
+#atexit.register(cleanup,None)
     
 ########################################################################################################################
 # ARGUMENT PARSER                                                                                                      #
