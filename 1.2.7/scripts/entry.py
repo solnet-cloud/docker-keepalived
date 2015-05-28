@@ -64,8 +64,17 @@ def vip_check(vips,check_str,exclude):
     except ValueError as e:
         print "The IP %s does not appear to be a valid (returned %s), terminating..." % (check[0], e)
         sys.exit(0) # This should be a return 0 to prevent the container from restarting.
+    
+    try:
+        if check_ip.version() is 6 and (int(check[1]) > 128 or int(check[1]) < 0):
+            print "The subnet %s is not a valid subnet for an IPv6 address, terminating" % check[1]
+            sys.exit(0) # This should be a return 0 to prevent the container from restarting.
+        elif check_ip.version() is 4 and (int(check[1]) > 32 or int(check[1]) < 0):
+            print "The subnet %s is not a valid subnet for an IPv4 address, terminating" % check[1]
+            sys.exit(0) # This should be a return 0 to prevent the container from restarting.
+    except ValueError as e:
+        print "The subnet %s is not a valid intetge (returned %s), terminating" % (check[1], e)
         
-    #TODO: Check subnet length    
     if check[2] not in netifaces.interfaces():
         print "The iface %s does not appear to be a valid interface on this host, terminating..." % check[2]
         sys.exit(0) # This should be a return 0 to prevent the container from restarting.
