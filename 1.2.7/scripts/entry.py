@@ -10,7 +10,7 @@ import sys,os,pwd,grp   # OS Libraries
 import argparse         # Parse Arguments
 from subprocess import Popen, PIPE, STDOUT
                         # Open up a process
-import atexit
+#import atexit
 
 # Important required templating libarires
 from jinja2 import Environment as TemplateEnvironment, \
@@ -31,6 +31,7 @@ import requests         # Allows you to perform requests (like curl)
 # Varaibles/Consts
 scripts_path = '/ka-data/scripts/'
 
+'''
 # Define the cleanup function
 def cleanup(child):
     # Warning: This function can be registered more than once, code defensively!
@@ -39,6 +40,7 @@ def cleanup(child):
         child.terminate() # Terminate the child cleanly
         for line in iter(child.stdout.readline, ''): # Clear the buffer of any lines remaining
             sys.stdout.write(line)
+'''
 
 # User defined exception
 class SubprocessTimeoutError(Exception):
@@ -376,15 +378,20 @@ child_path = ["/usr/sbin/keepalived","--dont-fork","--log-console"]
 child = Popen(child_path, stdout = PIPE, stderr = STDOUT, shell = False)
 
 # Register the atexit terminaton
-atexit.register(cleanup, child)
+#atexit.register(cleanup, child)
 
 # Reopen stdout as unbuffered. This will mean log messages will appear as soon as they become avaliable.
 sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 
-
-# Output any log items to Docker
-for line in iter(child.stdout.readline, ''):
-    sys.stdout.write(line)
-
-# If the process terminates, read its errorcode and return it
-sys.exit(child.returncode)
+try:
+    # Output any log items to Docker
+    for line in iter(child.stdout.readline, ''):
+        sys.stdout.write(line)
+except SystemExit, KeyboardInterrupt:
+    print "Sending SIGTERM"
+    child.terminate() # Terminate the child
+    for line in iter(child.stdout.readline, ''):
+        sys.stdout.write(line)
+finally:
+    # If the process terminates, read its errorcode and return it
+    sys.exit(child.returncode)
