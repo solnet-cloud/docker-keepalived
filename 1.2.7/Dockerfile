@@ -12,8 +12,55 @@ FROM ubuntu:14.04
 # Run Instructions:
 # When running use the following flags:
 #       --restart=on-failure --log-driver=syslog --net=host --privileged=true
+#
 # The following command line arguments are supported.
-# == Output of --help here ==
+# usage: entry [-h] [--router-name [ROUTER_NAME]] [--master]
+#              [--auth-pass [AUTH_PASS]] [--vrid [VRID]] [--exclude [EXCLUDE]]
+#              [--check-interval [CHECK_INTERVAL]] [--check-rise [CHECK_RISE]]
+#              [--check-fall [CHECK_FALL]] [--override-check [OVERRIDE_CHECK] |
+#              --enable-check [ENABLE_CHECK]]
+#              track_iface priority include [include ...]
+# 
+# positional arguments:
+#   track_iface           The network interface this VRRP will broadcast
+#                         multicast traffic over
+#   priority              The priority this keepalived instance should run at in
+#                         this VRRP.
+#   include               The virtual IP(s) and iface(s) you will be using in
+#                         the form 203.0.113.0/24/eth0
+# 
+# optional arguments:
+#   -h, --help            show this help message and exit
+#   --router-name [ROUTER_NAME], -n [ROUTER_NAME]
+#                         The name you want to call this VRRP
+#   --master, -m          Set if this keepalived should act as the master for
+#                         this VRRP
+#   --auth-pass [AUTH_PASS], -p [AUTH_PASS]
+#                         This is the password this VRRP should use for
+#                         authentication.
+#   --vrid [VRID], -v [VRID]
+#                         This is the Virtual Router ID this VRRP should use.
+#   --exclude [EXCLUDE], -x [EXCLUDE]
+#                         Any virtual IP(s) and iface(s) you want to be excluded
+#                         in the form 203.0.113.0/24/eth0
+#   --check-interval [CHECK_INTERVAL], -i [CHECK_INTERVAL]
+#                         The interval the check script should repeat, (default
+#                         2)
+#   --check-rise [CHECK_RISE], -r [CHECK_RISE]
+#                         The amount of sucessful checks required to restore a
+#                         fault, (default 2)
+#   --check-fall [CHECK_FALL], -f [CHECK_FALL]
+#                         The amount of failed checks required to fault,
+#                         (default 2)
+#   --override-check [OVERRIDE_CHECK], -o [OVERRIDE_CHECK]
+#                         This is where you can provide a custom script to this
+#                         container to check if this instance should be demoted.
+#                         It looks for scripts in the folder /ka-data/scripts/.
+#                         The script should not take any arguments.
+#   --enable-check [ENABLE_CHECK], -e [ENABLE_CHECK]
+#                         This enables the default checking script which will
+#                         demote this instance if it cannot get a 200 return
+#                         code from the given URL.
 
 # NOTICE: You may need to enable multicast through the filewall to allow keepalived to work:
 # iptables -I INPUT -d 224.0.0.0/8 -j ACCEPT
