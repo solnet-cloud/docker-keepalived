@@ -1,10 +1,5 @@
 # docker-keepalived
 
-    Please note the following for this build:
-    
-    - I will be providing a script that provides the --enable-check functionality but due to time constraints this has
-      not been implemented just yet. Please do not use the --enable-check flag until this has been fixed.
-    
 Keepalived is a routing software designed to provide simple and robust facilities for loadbalancing and high-availability to Linux system and Linux based infrastructures. This container providers a mechanism to provide a highly avaliable IP address via the VRRP protocol. VRRP is a fundamental brick for router failover.
 
 More details on the Keepalived can be found at the project's website at http://keepalived.org/

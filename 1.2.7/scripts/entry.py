@@ -28,6 +28,9 @@ from threading import Thread
 import stat
 import urlparse         # Allows you to check the validity of a URL
 import requests         # Allows you to perform requests (like curl)
+
+from requests.exceptions import ConnectionError, SSLError
+                        # Handle request ConenctionError exceptions gracefully.
                         
 # Varaibles/Consts
 scripts_path = '/ka-data/scripts/'
@@ -254,7 +257,19 @@ if args.override_check is not None:
 # Check the default script is working
 check_url_parsed = None # Set default
 if args.enable_check is not None:
-    pass # TODO: After Haproxy container has been written update this script to verify the URL & write the check script
+    check_url_parsed = urlparse.urlparse(args.enable_check,'http')
+    try:
+        check_url_request = requests.get(urlparse.urlunparse(check_url_parsed))
+    except ConnectionError as e:
+        print "The URL provided will not estasblish a connection (returned %s), terminating..." % e
+        sys.exit(0) # This should be a return 0 to prevent the container from restarting.
+    except SSLError as e:
+        print "The URL provided did not pass SSL vertification (returned %s), terminating..." % e
+        sys.exit(0) # This should be a return 0 to prevent the container from restarting.
+    except:
+        e = sys.exc_info()[0]
+        print "Unrecognised exception occured, was unable to perform test request (returned %s), terminating..." % e
+        sys.exit(0) # This should be a return 0 to prevent the container from restarting.
 
 # Setup the check script variables
 check_script = { 'enabled'  : check_script_enabled,
